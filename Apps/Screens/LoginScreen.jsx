@@ -1,70 +1,96 @@
 import { View, Text, TextInput, TouchableOpacity, ScrollView, Image } from 'react-native'
 import React, { useState } from 'react'
-import { useWarmUpBrowser } from "../hooks/WarmUpBrowser.tsx";
-import * as WebBrowser from "expo-web-browser";
-import { useOAuth } from '@clerk/clerk-expo';
-
-
-WebBrowser.maybeCompleteAuthSession();
-
+import auth from "@react-native-firebase/auth"
+import firestore from '@react-native-firebase/firestore'
 
 const LoginScreen = ({navigation}) => {
 
-    useWarmUpBrowser();
- 
-    const { startOAuthFlow } = useOAuth({ strategy: "oauth_google" });
+  const [phoneNumber, setPhoneNumber] = useState('')
+  const [code, setCode] = useState('')
+  const [confirm, setConfirm] = useState('')
 
-    const onPress = React.useCallback(async () => {
-        try {
-          const { createdSessionId, signIn, signUp, setActive } =
-            await startOAuthFlow();
-     
-          if (createdSessionId) {
-            setActive({ session: createdSessionId });
-          } else {
-            // Use signIn or signUp for next steps such as MFA
-          }
-        } catch (err) {
-          console.error("OAuth error", err);
-        }
-      }, []);
+  const signInWithPhoneNumber = async () => {
+    try {
+      const confirmation = await auth().signInWithPhoneNumber('+91'+phoneNumber)
+      setConfirm(confirmation)
+    } catch (error) {
+        console.log("error sending code: ", error)
+    }
+  }
 
-    return (
-            <ScrollView contentContainerStyle='flex items-center justify-center' className='bg-white w-auto' keyboardShouldPersistTaps='handled'>
-                    <View className="bg-white h-[50vh] items-center rounded-b-[70px] border-b-[1px] border-l-[1px] border-r-[1px] border-gray-200">
-                            <View className="flex w-full mt-[120px] items-center justify-center">
-                                <Text className='text-[#FF6300] text-[100px]'>Hi!</Text> 
-                                <Text className='text-black text-[20px] mt-6'>Welcome to</Text> 
-                            </View>
-                            <View className="flex w-full mt-[10px] items-center justify-center">
-                                <Image source={require('./../../assets/Images/logo.png')} className="w-[150px] h-[40px] mt-6"/>
-                                <Text className='text-black text-[50px] font-medium mt-3 ml-3'>InstaSolve</Text>    
-                            </View>        
-                    </View> 
-                        
-                    <View className="flex h-[50vh] items-center">
-                        <View className='flex items-center mt-4 h-[100px] w-[90%] border-b-[1px] border-gray-200'>
-                            <Text className='text-[30px] mt-1'>World's only</Text>
-                            <Text className='text-[30px]'>Live Instant-Tutoring</Text>
-                        </View>
-                        <View className=" w-full items-center justify-center mt-2">
-                            <Text className='text-[15px] text-gray mt-[10px]'>Login or Sign Up</Text>
-                            {/* <TextInput placeholder='Enter your Phone' keyboardType='phone-pad' caretHidden maxLength={10} className='h-[50px] w-[320px] mt-[16px] rounded-[8px] pl-6 text-[20px] border-[1px] border-gray-200'
-                                value={Phone}
-                                onChange={(number) => setPhone(number)}
-                            /> */}
-                            <TouchableOpacity className="bg-blue-600 rounded-full mt-[25px] h-[5vh] w-[250px] flex items-center justify-center"
-                                onPress={onPress}
-                            >
-                                <Text className='text-[15px] text-white'>Continue with Google</Text>
-                            </TouchableOpacity>
-                        </View>
-                        <View className = "h-[100px] w-full mt-[15px] flex items-center">
-                            <Text className="text-[15px] font-bold"></Text>
-                        </View>
-                    </View>
+  const confirmCode = async () => {
+    try {
+      const userCredentials = await confirm.confirm(code)
+      const user = userCredentials.user;
+
+      const userDocument = await firestore().collection("users").doc(user.uid).get()
+      if(userDocument.exists){
+        navigation.navigate('AppSelectionComponent')
+      }else{
+        navigation.navigate('Details', {uid: user.uid})
+      }
+
+    } catch (error) {
+      
+    }
+  }
+
+  return (
+            <ScrollView contentContainerStyle='flex items-center justify-center' keyboardShouldPersistTaps='handled' className="bg-red-400s">
+              <View className='bg-white h-[100vh] flex pt-[10%]'>
+                <View className="flex-[0.1] flex">
+                    <View className="flex-1 flex items-center justify-center">
+                      <View className="h-[100%] w-[30%] flex items-center justify-center">
+                        <Image source={require('./../../assets/Images/companyLogo.jpg')} resizeMode='contain' className="w-[60%] h-[60%]"/>
+                      </View>
+                  </View> 
+                </View> 
+                <View className="flex-[0.4] flex">
+                    <View className="flex-1 flex items-center justify-center">
+                      <View className="flex-[0.3] flex items-center justify-end w-full">
+                        <Text className="text-[#121212] text-[50px]">Hi!</Text>
+                      </View>
+                      <View className="flex-[0.2] flex items-center justify-center w-full">
+                        <Text className="text-[#121212] text-[20px]">Welcome To</Text>
+                      </View>
+                      <View className="flex-[0.25] flex items-center justify-center w-full">
+                        <Text className="text-[#FF6300] text-[70px]">WhiteLabel</Text>
+                      </View>
+                      <View className="flex-[0.25] flex items-center justify-start w-full">
+                        <Text className="text-blue-500 text-[20px]">Embrace the future of learning!</Text>
+                      </View>
+                  </View>
+                </View>
+                <View className="flex-[0.4] flex border-t-[1px] border-solid border-t-gray-300">
+                    {!confirm ?
+                  <>
+                      <View className="flex-1 flex items-center justify-start">
+                      <View className="flex-[0.2]"><Text className='mt-[5px] pt-6 text-[15px] text-gray-600'>Login or Sign Up</Text></View>
+                      <View className="flex-[0.2] flex items-center justify-start w-full"><TextInput placeholder='Enter your Phone' keyboardType='numeric' maxLength={10} className="bg-slate-100 w-[80%] h-[80%] rounded-full pl-6 text-2xl" value={phoneNumber} onChangeText={setPhoneNumber}/></View>
+                      <View className="flex-[0.2] flex items-center justify-start w-full pt-2"><TouchableOpacity activeOpacity={0.8} className="bg-blue-500 w-[50%] h-[60%] rounded-full flex items-center justify-center" onPress={signInWithPhoneNumber}><Text className="text-white text-[20px]">Login</Text></TouchableOpacity></View>
+                  </View>
+                  </>
+                  :
+                  <>
+                  <View className="flex-1 flex items-center justify-start">
+                      <View className="flex-[0.2]"><Text className='mt-[5px] pt-6 text-[15px] text-gray-600'>Login or Sign Up</Text></View>
+                      <View className="flex-[0.2] flex items-center justify-start w-full"><TextInput placeholder='Enter OTP' keyboardType='numeric' maxLength={10} className="bg-slate-100 w-[80%] h-[80%] rounded-full pl-6 text-2xl" value={code} onChangeText={setCode}/></View>
+                      <View className="flex-[0.2] flex items-center justify-start w-full pt-2"><TouchableOpacity activeOpacity={0.8} className="bg-red-500 w-[50%] h-[60%] rounded-full flex items-center justify-center" onPress={confirmCode}><Text className="text-white text-[20px]">Enter OTP</Text></TouchableOpacity></View>
+                  </View>
+                  </>
+                  }
+                </View>
+                <View className="flex-[0.1] flex">
+                <View className="flex-1 h-[100%] flex items-center justify-center">
+                  <View className="h-[100%] w-[30%] flex flex-row items-center justify-center">
+                    <Text>Powered by</Text>
+                    <Image source={require('./../../assets/Images/logo.png')} resizeMode='contain' className="w-[30%] h-[30%]"/>
+                  </View>
+                </View>
+                </View>
+              </View>
+              
             </ScrollView>
-
     )
 }
 

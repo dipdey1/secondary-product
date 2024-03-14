@@ -2,6 +2,7 @@
   "expo": {
     "name": "Vedantu-doubt-app",
     "slug": "Vedantu-doubt-app",
+    "plugins": ["@react-native-firebase/app", "@react-native-firebase/auth"],
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
@@ -18,13 +19,20 @@
       "supportsTablet": true
     },
     "android": {
+      "googleServicesFile": "./google-services.json",
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
-      }
+      },
+      "package": "com.dipdey1.Vedantudoubtapp"
     },
     "web": {
       "favicon": "./assets/favicon.png"
+    },
+    "extra": {
+      "eas": {
+        "projectId": "293b9841-f644-42c4-a769-fc8e0d386d82"
+      }
     }
   }
 }
