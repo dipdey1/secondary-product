@@ -7,7 +7,7 @@ const Playlists = () => {
     <ScrollView contentContainerStyle='flex' className="">
       <View>
         <Text>
-            Playlists
+            Libraries
         </Text>
       </View>
     </ScrollView>

@@ -44,7 +44,7 @@ export default function App() {
           // </NavigationContainer>
           // : 
           <NavigationContainer>
-          <StatusBar style="dark"/>
+          <StatusBar style="light"/>
             <Stack.Navigator
                 screenOptions={{
                   headerShown: false

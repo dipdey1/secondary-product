@@ -2,6 +2,7 @@ import { View, Text, SafeAreaView, TouchableOpacity, Image } from 'react-native'
 import auth from '@react-native-firebase/auth'
 import React from 'react'
 import { useNavigation } from '@react-navigation/native'
+import { StatusBar } from 'expo-status-bar'
 // import { AsyncStorage } from '@react-native-async-storage/async-storage'
 
 
@@ -22,6 +23,7 @@ const AppSelectionComponent = () => {
 
   return (
     <>
+    <StatusBar style="dark"/>
     <SafeAreaView className="flex h-full bg-white">
         <View className="flex-[0.15] flex-row w-full">
           <View className="flex-1 h-[100%] flex items-center justify-center">

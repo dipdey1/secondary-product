@@ -1,56 +1,39 @@
-import { View, Text, ScrollView, TouchableOpacity, Image } from 'react-native'
+import { View, Text, TouchableOpacity, Image } from 'react-native'
 import React from 'react'
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs'
 import Icon from 'react-native-vector-icons/Entypo'
-import Icon1 from 'react-native-vector-icons/MaterialIcons'
-import Icon2 from 'react-native-vector-icons/Ionicons'
-import Icon3 from 'react-native-vector-icons/MaterialCommunityIcons'
+import Icon1 from 'react-native-vector-icons/Ionicons'
+import Icon2 from 'react-native-vector-icons/MaterialIcons'
+import Icon3 from 'react-native-vector-icons/FontAwesome5'
 import Videos from './Screens/Videos'
 import Statistics from './Screens/Statistics'
 import Assignments from './Screens/Assignments'
 import Playlists from './Screens/Playllists'
 import Profile from './Screens/Profile'
+import { StatusBar } from 'expo-status-bar'
 
 const Tab = createBottomTabNavigator()
 
-const CustomTabBarButton = () => {
-  <TouchableOpacity
-    style={{
-      top:-30,
-      justifyContent:'center',
-      alignItems:'center',
-      elevation:8,
-    }}
-  >
-    <View style={{height:70, width:70, borderRadius:35, backgroundColor:'#FF6300'}}>
-      <Icon name='videos' size={30} color='#121212'/>
-    </View>
-  </TouchableOpacity>
-}
-
-// const videos = 'videos'
-// const statistics = 'statistics'
-// const assignments = 'assignments'
-// const profile = 'profile'
-// const playlists = 'playlists'
-
-const AIDashboard = () => {
+const AIDashboard = ({navigation}) => {
 
   return (
+    <>
+    <StatusBar style="light"/>
+
     <Tab.Navigator
+    initialRouteName='videos'
       screenOptions={{
         title:'',
         headerShown:false,
-        tabBarStyle: {padding:10, height:90,position:'absolute', bottom:5, left:20, right:20, elevation:3, backgroundColor:'#FFFFFF', borderRadius:12},
+        tabBarStyle: {height:80,position:'absolute', backgroundColor:'#02001A'},
       }
       }
       >
       <Tab.Screen name='playlists' component={Playlists} 
         options={{
           tabBarIcon: ({focused}) => (
-            <View style={{alignItems:'center', justifyContent:'center', top:5, gap:5, height: 100, width: 100}}>
-              <Image source={require('./../../../assets/Images/playlistlogo.jpeg')} resizeMode='contain' style={{width:35, height:35}}/>
-              <Text className="text-[15px]">Playlist</Text>
+            <View style={{alignItems:'center', justifyContent:'center', height: '100%', width:'100%', backgroundColor: focused ?'#FF693D' : "#02001A", borderBottomLeftRadius: 5, borderBottomRightRadius: 5}}>
+              <Icon1 name='library-sharp' size={25} color={focused? "#02001A" : 'white'}/>
             </View>
           )
         }}
@@ -58,35 +41,53 @@ const AIDashboard = () => {
       <Tab.Screen name='stats' component={Statistics}
       options={{
         tabBarIcon: ({focused}) => (
-          <View style={{alignItems:'center', justifyContent:'center', top:5, gap:5}}>
-            <Image source={require('./../../../assets/Images/statistics.jpg')} resizeMode='contain' style={{width:35, height:35}}/>
-            <Text className="text-[15px]">Statistics</Text>
+          <View style={{alignItems:'center', justifyContent:'center', height: '100%', width:'100%', backgroundColor: focused ?'#FF693D' : "#02001A", borderBottomLeftRadius: 5, borderBottomRightRadius: 5}}>
+            <Icon2 name='query-stats' size={25} color={focused? "#02001A" : 'white'}/>
           </View>
         )
       }}
       />
-      <Tab.Screen name='videos' component={Videos}/>
+      <Tab.Screen name='videos' component={Videos}
+      options={{
+        tabBarButton: ({focused}) => (
+          <TouchableOpacity
+          style={{
+            top:-15,
+            justifyContent:'center',
+            alignItems:'center',
+            elevation:8,
+            backgroundColor: '#FFF',
+            borderRadius: 8
+          }}
+          className=''
+          activeOpacity={1}
+          onPress={() => navigation.navigate('videos')}
+        >
+          <View className='flex items-center justify-center' style={{height:50, width:50}}>
+            <Icon name='video-camera' size={25} color={'#FF693D'}/>
+          </View>
+        </TouchableOpacity>
+          )
+      }}/>
       <Tab.Screen name='assignments' component={Assignments}
       options={{
         tabBarIcon: ({focused}) => (
-          <View style={{alignItems:'center', justifyContent:'center', top:5, gap:5}}>
-            <Image source={require('./../../../assets/Images/Assignment.jpg')} resizeMode='contain' style={{width:35, height:35}}/>
-            <Text className="text-[15px]">Assignments</Text>
+          <View style={{alignItems:'center', justifyContent:'center', height: '100%', width:'100%', backgroundColor: focused ?'#FF693D' : "#02001A", borderBottomLeftRadius: 5, borderBottomRightRadius: 5}}>
+            <Icon2 name='assignment-add' size={25} color={focused? "#02001A" : 'white'}/> 
           </View>
         )
       }}/>
       <Tab.Screen name='settings' component={Profile}
       options={{
         tabBarIcon: ({focused}) => (
-          <View style={{alignItems:'center', justifyContent:'center', top:5, gap:5}}>
-            <Image source={require('./../../../assets/Images/playlistlogo.jpeg')} resizeMode='contain' style={{width:35, height:35}}/>
-            <Text className="text-[15px]">Profile</Text>
+          <View style={{alignItems:'center', justifyContent:'center', height: '100%', width:'100%', backgroundColor: focused ?'#FF693D' : "#02001A", borderBottomLeftRadius: 5, borderBottomRightRadius: 5}}>
+            <Icon3 name='user-graduate' size={25} color={focused? "#02001A" : 'white'}/> 
           </View>
         )
       }}
       />
     </Tab.Navigator>
-    
+    </>
   )
 }
 
@@ -95,7 +96,7 @@ export default AIDashboard
 {/* <Tab.Navigator
 initialRouteName={videos}
 screenOptions={({route}) => ({
-  tabBarActiveTintColor:'#FF6300',
+  tabBarActiveTintColor:'#FF693D',
   tabBarInactiveTintColor:'#121212',
   tabBarStyle: {padding:10, height:90,position:'absolute', bottom:25, left:20, right:20, elevation:3, backgroundColor:'#F6f6f6', borderRadius:12},
   title:'',
